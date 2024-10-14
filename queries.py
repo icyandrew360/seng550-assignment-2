@@ -22,5 +22,5 @@ cursor.execute('''
     #     OR 
     #     (c.end_date IS NULL AND o.order_date > c.effective_date)
     # ) 
-result = cursor.fetchone()
-print (result)
+result = cursor.fetchall()
+print (tabulate(result, tablefmt="psql"))
