@@ -11,7 +11,7 @@ def transform_customer_data(data):
     return clean_data
 
 def process_order(csv_line):
-    order_date = datetime.now().strftime('%Y-%m-%d')
+    order_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
     order_id, customer_id, amount = transform_customer_data(csv_line.split(','))
     # Insert the order into fact_orders
     cursor.execute("""INSERT INTO fact_orders VALUES (?,?,?,?)""", (order_id, customer_id, order_date, amount))

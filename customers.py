@@ -11,7 +11,7 @@ def transform_customer_data(data):
     return clean_data
 
 def process_customer(csv_line):
-    current_date = datetime.now().strftime('%Y-%m-%d')
+    current_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')
     customer_id, name, city = transform_customer_data(csv_line.split(','))
 # Query the current customer data to check if this is a new customer or an update
     cursor.execute("""SELECT * FROM dim_customers WHERE customer_id = ? AND is_current = 1""", (customer_id))
