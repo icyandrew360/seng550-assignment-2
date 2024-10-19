@@ -1,0 +1,4 @@
+1. If the order is received by orders.py before the customer changes are received, 
+Query 1 and 3 will reflect incorrect data. Since the order date will technically be within
+the effective and end date of the previous city rather than the one they placed the order
+in, query 1 and 3 will treat the customer's order as if it was from the last city.

@@ -37,29 +37,32 @@ def get_customer_total_orders():
 def get_order_amounts_by_customers_in_their_current_city_and_previous_city():
     # Total amount of orders for each customer in their current city and previous city
     cursor.execute('''
-        SELECT o.customer_id,         
-        SUM(CASE 
-            WHEN c.end_date IS NULL AND o.order_date > c.effective_date THEN o.amount 
-            ELSE 0 
-        END) AS current_city_amount,
-        SUM(CASE 
-            WHEN c.end_date IS NOT NULL AND o.order_date BETWEEN c.effective_date AND c.end_date THEN o.amount 
-            ELSE 0 
-        END) AS previous_city_amount
-        FROM fact_orders o LEFT JOIN 
-            (SELECT * FROM dim_customers ORDER BY effective_date DESC LIMIT 2) c
+        SELECT 
+            o.customer_id,
+            SUM(CASE 
+                WHEN c.is_current = 1 THEN o.amount 
+                ELSE 0 
+            END) AS current_city_amount,
+            SUM(CASE 
+                WHEN c.is_current = 0 THEN o.amount 
+                ELSE 0 
+            END) AS previous_city_amount
+        FROM fact_orders o 
+        JOIN dim_customers c 
         ON o.customer_id = c.customer_id 
         AND (
             (c.end_date IS NULL AND o.order_date > c.effective_date)
             OR
             (c.end_date IS NOT NULL AND o.order_date BETWEEN c.effective_date AND c.end_date)
-        )   
+        )    
+        GROUP BY o.customer_id
     ''')
     result = cursor.fetchall()
     headers = [i[0] for i in cursor.description] # generate the labels from the cursor object
     print (tabulate(result, headers=headers, tablefmt="psql"))
 
-
+get_city_order_details()
+get_customer_total_orders()
 get_order_amounts_by_customers_in_their_current_city_and_previous_city()
 
 conn.close()
